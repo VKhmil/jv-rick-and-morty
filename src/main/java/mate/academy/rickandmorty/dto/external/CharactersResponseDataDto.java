@@ -5,5 +5,6 @@ import lombok.Data;
 
 @Data
 public class CharactersResponseDataDto {
+    private CharacterInfoDataDto info;
     private List<ExternalCharacterDataDto> results;
 }
