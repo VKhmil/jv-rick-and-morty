@@ -8,6 +8,7 @@ import mate.academy.rickandmorty.mapper.CharacterMapper;
 import mate.academy.rickandmorty.model.Character;
 import mate.academy.rickandmorty.repository.CharacterRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,24 +24,23 @@ public class CharacterServiceImpl implements CharacterService {
         characterRepository.saveAll(characters);
     }
 
+    @Transactional
     @Override
     public CharacterInternalDto getRandomCharacter() {
-        if (numberOfCharacters == 0) {
-            numberOfCharacters = characterRepository.count();
+        List<Character> allCharacters = characterRepository.findAll();
+        if (allCharacters.isEmpty()) {
+            throw new RuntimeException("No characters found in the database.");
         }
 
-        long randomId = random.nextLong(numberOfCharacters);
-        Character character =
-                characterRepository.findById(randomId)
-                        .orElseThrow(() -> new RuntimeException(EXC_MSG_CANT_FIND + randomId));
-        return mapper.toDto(character);
+        int randomIndex = ThreadLocalRandom.current().nextInt(allCharacters.size());
+        Character randomCharacter = allCharacters.get(randomIndex);
+        return mapper.toDto(randomCharacter);
     }
 
     @Override
     public List<CharacterInternalDto> getAllByNamePart(String namePart) {
         return characterRepository
-                .findAllByNameContainingIgnoreCase(namePart)
-                .stream()
+                .findAllByNameContainingIgnoreCase(namePart).stream()
                 .map(mapper::toDto)
                 .toList();
     }

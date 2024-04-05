@@ -1,5 +1,6 @@
 package mate.academy.rickandmorty.mapper;
 
+import java.util.List;
 import mate.academy.rickandmorty.config.MapperConfig;
 import mate.academy.rickandmorty.dto.external.ExternalCharacterDataDto;
 import mate.academy.rickandmorty.dto.internal.CharacterInternalDto;
@@ -13,4 +14,7 @@ public interface CharacterMapper {
 
     @Mapping(source = "id", target = "externalId")
     Character toModel(ExternalCharacterDataDto dto);
+
+    @Mapping(source = "id", target = "externalId")
+    List<Character> toModels(List<ExternalCharacterDataDto> dtos);
 }

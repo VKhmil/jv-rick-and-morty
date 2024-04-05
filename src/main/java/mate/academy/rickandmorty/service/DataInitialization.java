@@ -3,6 +3,7 @@ package mate.academy.rickandmorty.service;
 import jakarta.annotation.PostConstruct;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import mate.academy.rickandmorty.dto.external.ExternalCharacterDataDto;
 import mate.academy.rickandmorty.mapper.CharacterMapper;
 import mate.academy.rickandmorty.model.Character;
 import mate.academy.rickandmorty.service.character.CharacterService;
@@ -17,9 +18,7 @@ public class DataInitialization {
 
     @PostConstruct
     public void init() {
-        List<Character> characters = client.getCharacters().stream()
-                .map(mapper::toModel)
-                .toList();
-        characterService.saveAll(characters);
+        List<ExternalCharacterDataDto> characters = client.getCharacters();
+        List<Character> characterModels = mapper.toModels(characters);
     }
 }

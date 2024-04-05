@@ -17,14 +17,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CharacterClient {
     private static final String BASE_URL = "https://rickandmortyapi.com/api/character?page=%d";
+    private final CharactersResponseDataDto pages;
+    private HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
     public List<ExternalCharacterDataDto> getCharacters() {
         List<ExternalCharacterDataDto> charactersFromApi = new ArrayList<>();
-        HttpClient httpClient = HttpClient.newHttpClient();
-        int numberOfPages = getNumberOfPages(httpClient);
+        httpClient = HttpClient.newHttpClient();
 
-        for (int i = 1; i <= numberOfPages; i++) {
+        for (int i = 1; i <= pages.getInfo().pages(); i++) {
             String url = String.format(BASE_URL, i);
             HttpRequest httpRequest = HttpRequest.newBuilder()
                     .GET()
@@ -41,21 +42,5 @@ public class CharacterClient {
             }
         }
         return charactersFromApi;
-    }
-
-    private int getNumberOfPages(HttpClient httpClient) {
-        HttpRequest initialRequest = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(String.format(BASE_URL, 1)))
-                .build();
-        try {
-            HttpResponse<String> initialResponse =
-                    httpClient.send(initialRequest, HttpResponse.BodyHandlers.ofString());
-            CharactersResponseDataDto initialDataDto =
-                    objectMapper.readValue(initialResponse.body(), CharactersResponseDataDto.class);
-            return initialDataDto.getInfo().pages();
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
