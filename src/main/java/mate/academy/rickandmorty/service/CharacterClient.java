@@ -17,16 +17,15 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CharacterClient {
     private static final String BASE_URL = "https://rickandmortyapi.com/api/character?page=%d";
-    private final CharactersResponseDataDto pages;
     private HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
     public List<ExternalCharacterDataDto> getCharacters() {
         List<ExternalCharacterDataDto> charactersFromApi = new ArrayList<>();
         httpClient = HttpClient.newHttpClient();
+        String url = BASE_URL;
 
-        for (int i = 1; i <= pages.getInfo().pages(); i++) {
-            String url = String.format(BASE_URL, i);
+        while (url != null) {
             HttpRequest httpRequest = HttpRequest.newBuilder()
                     .GET()
                     .uri(URI.create(url))
