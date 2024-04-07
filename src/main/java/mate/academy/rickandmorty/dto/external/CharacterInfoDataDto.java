@@ -1,9 +1,11 @@
 package mate.academy.rickandmorty.dto.external;
 
-public record CharacterInfoDataDto(
-        Integer count,
-        Integer pages,
-        String next,
-        String prev
-) {
+import lombok.Data;
+
+@Data
+public class CharacterInfoDataDto {
+    private Integer count;
+    private Integer pages;
+    private String next;
+    private String prev;
 }

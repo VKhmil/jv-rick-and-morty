@@ -16,30 +16,32 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class CharacterClient {
-    private static final String BASE_URL = "https://rickandmortyapi.com/api/character?page=%d";
-    private HttpClient httpClient;
+    private static final String BASE_URL = "https://rickandmortyapi.com/api/character";
+    private HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper;
 
     public List<ExternalCharacterDataDto> getCharacters() {
-        List<ExternalCharacterDataDto> charactersFromApi = new ArrayList<>();
-        httpClient = HttpClient.newHttpClient();
+        List<ExternalCharacterDataDto> allCharacters = new ArrayList<>();
         String url = BASE_URL;
-
-        while (url != null) {
-            HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .GET()
-                    .uri(URI.create(url))
-                    .build();
-            try {
-                HttpResponse<String> response =
-                        httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-                CharactersResponseDataDto dataDto =
-                        objectMapper.readValue(response.body(), CharactersResponseDataDto.class);
-                charactersFromApi.addAll(dataDto.getResults());
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
+        try {
+            while (url != null && !url.isEmpty()) {
+                HttpResponse<String> response = fetchData(url);
+                CharactersResponseDataDto pageData = objectMapper.readValue(response.body(),
+                        CharactersResponseDataDto.class);
+                allCharacters.addAll(pageData.getResults());
+                url = pageData.getInfo().getNext();
             }
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
-        return charactersFromApi;
+        return allCharacters;
+    }
+
+    public HttpResponse<String> fetchData(String url) throws IOException, InterruptedException {
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create(url))
+                .build();
+        return httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
     }
 }

@@ -8,7 +8,6 @@ import mate.academy.rickandmorty.mapper.CharacterMapper;
 import mate.academy.rickandmorty.model.Character;
 import mate.academy.rickandmorty.repository.CharacterRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,6 @@ public class CharacterServiceImpl implements CharacterService {
         characterRepository.saveAll(characters);
     }
 
-    @Transactional
     @Override
     public CharacterInternalDto getRandomCharacter() {
         List<Character> allCharacters = characterRepository.findAll();
