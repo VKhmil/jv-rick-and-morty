@@ -30,16 +30,16 @@ public class CharacterServiceImpl implements CharacterService {
             throw new RuntimeException("No characters found in the database.");
         }
 
-        int randomIndex = ThreadLocalRandom.current().nextInt(allCharacters.size());
+        int randomIndex = random.nextInt(allCharacters.size());
         Character randomCharacter = allCharacters.get(randomIndex);
         return mapper.toDto(randomCharacter);
     }
 
     @Override
     public List<CharacterInternalDto> getAllByNamePart(String namePart) {
-        return characterRepository
-                .findAllByNameContainingIgnoreCase(namePart).stream()
-                .map(mapper::toDto)
-                .toList();
+        List<Character> characters = characterRepository
+                .findAllByNameContainingIgnoreCase(namePart);
+        return mapper.toModels(characters);
+
     }
 }

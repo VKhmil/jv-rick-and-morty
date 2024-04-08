@@ -19,6 +19,6 @@ public class DataInitialization {
     @PostConstruct
     public void init() {
         List<ExternalCharacterDataDto> characters = client.getCharacters();
-        List<Character> characterModels = mapper.toModels(characters);
+        List<Character> characterModels = mapper.toModelsEx(characters);
     }
 }

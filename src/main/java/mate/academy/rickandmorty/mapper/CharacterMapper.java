@@ -16,5 +16,8 @@ public interface CharacterMapper {
     Character toModel(ExternalCharacterDataDto dto);
 
     @Mapping(source = "id", target = "externalId")
-    List<Character> toModels(List<ExternalCharacterDataDto> dtos);
+    List<CharacterInternalDto> toModels(List<Character> dtos);
+
+    @Mapping(source = "id", target = "externalId")
+    List<Character> toModelsEx(List<ExternalCharacterDataDto> dtos);
 }
